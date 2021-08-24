@@ -28,11 +28,14 @@ namespace ScanME.Controllers
         public async Task<IActionResult> SignUp([FromBody] SignupModel signupModel)
         {
             
-            //find our repository from unit of work
+            //sign up response 
             var response = await _repository.Signup(signupModel);
+            if (response.IsRegistered)
+            {
+                return await Login(new LoginModel() { Email = signupModel.Email, Password = signupModel.Password });
+            }
 
-         
-            return Json(response);
+            return Conflict();
         }
 
         [HttpPost("login")]
