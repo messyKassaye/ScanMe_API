@@ -20,11 +20,6 @@ namespace ScanME.Repository
             _context = context;
         }
 
-        public Task<bool> CheckUserExistence(string email)
-        {
-            throw new NotImplementedException();
-        }
-
         public async Task<Users> GetUser(string email)
         {
             return await _context.Users.SingleOrDefaultAsync(u => u.Email == email);
