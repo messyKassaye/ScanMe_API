@@ -1,9 +1,11 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using ScanME.Exceptions;
 using ScanME.Models;
 using ScanME.Repository.Interfaces;
 using ScanME.Services.Interfaces;
+using System;
 using System.Threading.Tasks;
 
 namespace ScanME.Controllers
@@ -27,7 +29,7 @@ namespace ScanME.Controllers
         [HttpPost("signup")]
         public async Task<IActionResult> SignUp([FromBody] SignupModel signupModel)
         {
-            
+
             //sign up response 
             var response = await _repository.Signup(signupModel);
             if (response.IsRegistered)
@@ -35,7 +37,7 @@ namespace ScanME.Controllers
                 return await Login(new LoginModel() { Email = signupModel.Email, Password = signupModel.Password });
             }
 
-            return Conflict();
+            throw new ConflictExceptions(response.Message);
         }
 
         [HttpPost("login")]
@@ -52,7 +54,7 @@ namespace ScanME.Controllers
                 return Json(response);
             }
 
-            return NotFound();
+            throw new NotFoundExceptions("Unknown user. No one is registered by this email");
         }
     }
 }
