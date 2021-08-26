@@ -1,4 +1,5 @@
-﻿using ScanME.Models;
+﻿using Microsoft.AspNetCore.Mvc;
+using ScanME.Models;
 using System.Threading.Tasks;
 
 namespace ScanME.Repository.Interfaces
@@ -8,5 +9,6 @@ namespace ScanME.Repository.Interfaces
        Task<Users> Login(LoginModel loginModel);
        Task<AuthResponse> Signup(SignupModel signupModel);
        Task<Users> GetUser(string email);
+        Task RegisterCompany(string companyName);
     }
 }

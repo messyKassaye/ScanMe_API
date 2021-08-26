@@ -40,6 +40,17 @@ namespace ScanME.Repository
             return null;
         }
 
+        public async Task RegisterCompany(string companyName)
+        {
+            var company = new Company()
+            {
+                Name = companyName
+            };
+             await _context.Company.AddAsync(company);
+             await _context.SaveChangesAsync();
+            
+        }
+
         public async Task<AuthResponse> Signup(SignupModel signupModel)
         {
             //Check if some one registered by this email address
@@ -71,6 +82,7 @@ namespace ScanME.Repository
 
             if (result == 1)
             {
+                await RegisterCompany(signupModel.CompanyName);
                 response.Message = "Successfully registered";
                 response.StatusCode = StatusCodes.Status200OK;
                 response.Token = null;

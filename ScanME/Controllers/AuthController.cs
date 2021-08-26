@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace ScanME.Controllers
 {
-
+    
     [Route("auth/")]
     [ApiController]
     public class AuthController : Controller

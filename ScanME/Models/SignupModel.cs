@@ -14,6 +14,8 @@ namespace ScanME.Models
         public string Email { get; set; }
         [Required(ErrorMessage ="Phone number is required")]
         public string Phone { get; set; }
+        [Required(ErrorMessage ="Company name is required")]
+        public string CompanyName { get; set; }
         [Required(ErrorMessage ="Password is required")]
         public string Password { get; set; }
     }

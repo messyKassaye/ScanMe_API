@@ -67,6 +67,7 @@ namespace ScanME
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "ScanME v1"));
             }
             app.UseMiddleware<GlobalErrorHandling>();
+            app.UseMiddleware<GlobalAuthenticationHandler>();
             app.UseHttpsRedirection();
             app.UseRouting();
             app.UseAuthorization();
