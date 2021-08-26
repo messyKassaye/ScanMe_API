@@ -2,6 +2,7 @@
 using ScanME.DTO;
 using ScanME.Models;
 using ScanME.Services.Interfaces;
+using ScanME.UnitOfWorks;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
@@ -16,26 +17,25 @@ namespace ScanME.Services
     {
         private const double EXPIRY_DURATION_MINUTES = 30;
 
-        public string GenerateToken(string key, string issuer, Users users)
+        public string GenerateToken(string keys,string issuer, Users users)
         {
-            var claims = new[]
+            // generate token that is valid for 7 days
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.ASCII.GetBytes(keys);
+            var tokenDescriptor = new SecurityTokenDescriptor
             {
-                 new Claim(ClaimTypes.Name,users.Email),
-                 new Claim(ClaimTypes.NameIdentifier,Guid.NewGuid().ToString())
+                Subject = new ClaimsIdentity(new[] { new Claim("id", users.UsersId.ToString()) }),
+                Expires = DateTime.UtcNow.AddDays(7),
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
-
-            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key));
-            var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256Signature);
-
-            var tokenDescriptor = new JwtSecurityToken(issuer, issuer, claims,
-           expires: DateTime.Now.AddMinutes(EXPIRY_DURATION_MINUTES), signingCredentials: credentials);
-            return new JwtSecurityTokenHandler().WriteToken(tokenDescriptor);
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+            return tokenHandler.WriteToken(token);
 
         }
 
         public bool IsValidToken(string key, string issuer, string token)
         {
-            var mySecret = Encoding.UTF8.GetBytes(key);
+            var mySecret = Encoding.ASCII.GetBytes(key);
             var mySecurityKey = new SymmetricSecurityKey(mySecret);
             var tokenHandler = new JwtSecurityTokenHandler();
             try
@@ -44,6 +44,8 @@ namespace ScanME.Services
                 new TokenValidationParameters
                 {
                     ValidateIssuerSigningKey = true,
+                    ValidateAudience=false,
+                    ValidateIssuer=false,
                     IssuerSigningKey = mySecurityKey,
                 }, out SecurityToken validatedToken);
             }
