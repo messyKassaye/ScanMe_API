@@ -19,14 +19,17 @@ namespace ScanME.Middlewares
     {
         private readonly RequestDelegate _next;
         private readonly IConfiguration _config;
-        public GlobalAuthenticationHandler(RequestDelegate next, IConfiguration config)
+        private readonly ITokenService _tokenService;
+        public GlobalAuthenticationHandler(RequestDelegate next, IConfiguration config,ITokenService tokenService)
         {
             _next = next;
             _config = config;
+            _tokenService = tokenService;
         }
 
         public async Task Invoke(HttpContext context)
         {
+            //gloabl routes
             string currentRoute = context.Request.Path;
             if (currentRoute.Equals("/auth/signup") || currentRoute.Equals("/auth/login"))
             {
@@ -38,25 +41,14 @@ namespace ScanME.Middlewares
             var response = context.Response;
             if (token != null)
             {
-                var tokenHandler = new JwtSecurityTokenHandler();
-                var key = Encoding.ASCII.GetBytes(_config["JWT:Key"]);
-                tokenHandler.ValidateToken(token, new TokenValidationParameters
+                var tokenValidation = _tokenService.IsValidToken(_config["JWT:Key"],_config["JWT:Issuer"],token);
+                if (tokenValidation)
                 {
-                    ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(key),
-                    ValidateIssuer = false,
-                    ValidateAudience = false,
-                    // set clockskew to zero so tokens expire exactly at token expiration time (instead of 5 minutes later)
-                    ClockSkew = TimeSpan.Zero
-                }, out SecurityToken validatedToken);
-
-                var jwtToken = (JwtSecurityToken)validatedToken;
-                var userId = int.Parse(jwtToken.Claims.First(x => x.Type == "id").Value);
-
-                // attach user to context on successful jwt validation
-                context.Items["UserId"] = userId;
-                await _next.Invoke(context);
-
+                    var userId = _tokenService.FindSubject(_config["JWT:Key"], token);
+                    // attach user to context on successful jwt validation
+                    context.Items["UserId"] = userId;
+                    await _next.Invoke(context);
+                }
             }
 
             response.ContentType = "Application/json";

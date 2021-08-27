@@ -10,6 +10,7 @@ namespace ScanME.Controllers
     [ApiController]
     public class UserController : Controller
     {
+       
         [HttpGet("me")]
         public IActionResult Me()
         {

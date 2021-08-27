@@ -11,5 +11,7 @@ namespace ScanME.Services.Interfaces
     {
        string GenerateToken(string key,string issuer,Users userDTO);
        bool IsValidToken(string key, string issuer, string token);
+
+        int FindSubject(string key,string token);
     }
 }
