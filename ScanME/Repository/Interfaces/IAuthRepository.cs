@@ -8,7 +8,8 @@ namespace ScanME.Repository.Interfaces
     {
        Task<Users> Login(LoginModel loginModel);
        Task<AuthResponse> Signup(SignupModel signupModel);
-       Task<Users> GetUser(string email);
-        Task RegisterCompany(string companyName);
+       Task<Users> CheckUsersEmailAndPhon(string email,string phone);
+       Task<Users> GetUsers(string email);
+       Task RegisterCompany(string companyName,int usersId);
     }
 }

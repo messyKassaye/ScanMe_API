@@ -11,16 +11,13 @@ using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using ScanME.Contexts;
+using ScanME.Mapping;
 using ScanME.Middlewares;
 using ScanME.Repository;
 using ScanME.Repository.Interfaces;
 using ScanME.Services;
 using ScanME.Services.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace ScanME
 {
@@ -36,14 +33,11 @@ namespace ScanME
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            
             services.AddSingleton<ITokenService,TokenService>();
             services.AddScoped<IAuthRepository, AuthRepository>();
-
             services.AddDbContext<ApplicationDbContext>(options =>
               options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"))
             );
-
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
             {
                 options.TokenValidationParameters = new TokenValidationParameters
@@ -54,14 +48,13 @@ namespace ScanME
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["JWT:Key"])),
 
                 };
-                //options.Authority = Configuration["JWT:Issuer"];
-                //options.Audience = Configuration["JWT:Audience"];
             });
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "ScanME", Version = "v1" });
             });
+            services.AddAutoMapper(typeof(Startup));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

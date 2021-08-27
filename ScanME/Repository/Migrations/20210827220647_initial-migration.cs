@@ -57,7 +57,7 @@ namespace ScanME.Migrations
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Logo = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CategoryCompanyCategoryId = table.Column<int>(type: "int", nullable: true),
-                    OwnerUsersId = table.Column<int>(type: "int", nullable: true)
+                    UsersId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -69,11 +69,11 @@ namespace ScanME.Migrations
                         principalColumn: "CompanyCategoryId",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_Company_Users_OwnerUsersId",
-                        column: x => x.OwnerUsersId,
+                        name: "FK_Company_Users_UsersId",
+                        column: x => x.UsersId,
                         principalTable: "Users",
                         principalColumn: "UsersId",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -126,9 +126,10 @@ namespace ScanME.Migrations
                 column: "CategoryCompanyCategoryId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Company_OwnerUsersId",
+                name: "IX_Company_UsersId",
                 table: "Company",
-                column: "OwnerUsersId");
+                column: "UsersId",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Phone_CompanyId",

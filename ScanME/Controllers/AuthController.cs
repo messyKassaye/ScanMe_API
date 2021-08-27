@@ -31,13 +31,20 @@ namespace ScanME.Controllers
         {
 
             //sign up response 
-            var response = await _repository.Signup(signupModel);
-            if (response.IsRegistered)
+            var SignupResponse = await _repository.Signup(signupModel);
+            if (SignupResponse.IsRegistered)
             {
-                return await Login(new LoginModel() { Email = signupModel.Email, Password = signupModel.Password });
+              string token =  _tokenService.GenerateToken(_config["JWT:Key"], _config["JWT:Issuer"], SignupResponse.Users);
+                var response = new
+                {
+                    StatusCode=StatusCodes.Status200OK,
+                    Message = $"Hey, {SignupResponse.Users.FullName} you are successfully become a member of ScanME. Thank you for choosing us",
+                    Token = token
+                };
+                return Json(response);
             }
 
-            throw new ConflictExceptions(response.Message);
+            throw new ConflictExceptions(SignupResponse.Message);
         }
 
         [HttpPost("login")]
@@ -46,11 +53,14 @@ namespace ScanME.Controllers
             var user = await _repository.Login(loginModel);
             if (user != null)
             {
-                var response = new AuthResponse();
+                
                 var token = _tokenService.GenerateToken(_config["JWT:Key"], _config["JWT:Issuer"],user);
-                response.Token = token;
-                response.StatusCode = StatusCodes.Status200OK;
-                response.Message = "Successfully loged in";
+                var response = new
+                {
+                    Token = token,
+                    StatusCode = StatusCodes.Status200OK,
+                    Message = "Successfully login"
+                };
                 return Json(response);
             }
 

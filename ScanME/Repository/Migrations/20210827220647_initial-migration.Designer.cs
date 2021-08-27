@@ -10,7 +10,7 @@ using ScanME.Contexts;
 namespace ScanME.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20210823234953_initial-migration")]
+    [Migration("20210827220647_initial-migration")]
     partial class initialmigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -52,14 +52,15 @@ namespace ScanME.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("OwnerUsersId")
+                    b.Property<int>("UsersId")
                         .HasColumnType("int");
 
                     b.HasKey("CompanyId");
 
                     b.HasIndex("CategoryCompanyCategoryId");
 
-                    b.HasIndex("OwnerUsersId");
+                    b.HasIndex("UsersId")
+                        .IsUnique();
 
                     b.ToTable("Company");
                 });
@@ -159,13 +160,15 @@ namespace ScanME.Migrations
                         .WithMany("Companies")
                         .HasForeignKey("CategoryCompanyCategoryId");
 
-                    b.HasOne("ScanME.Models.Users", "Owner")
-                        .WithMany()
-                        .HasForeignKey("OwnerUsersId");
+                    b.HasOne("ScanME.Models.Users", "Users")
+                        .WithOne("Company")
+                        .HasForeignKey("ScanME.Models.Company", "UsersId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Category");
 
-                    b.Navigation("Owner");
+                    b.Navigation("Users");
                 });
 
             modelBuilder.Entity("ScanME.Models.Phone", b =>
@@ -185,6 +188,11 @@ namespace ScanME.Migrations
             modelBuilder.Entity("ScanME.Models.CompanyCategory", b =>
                 {
                     b.Navigation("Companies");
+                });
+
+            modelBuilder.Entity("ScanME.Models.Users", b =>
+                {
+                    b.Navigation("Company");
                 });
 #pragma warning restore 612, 618
         }

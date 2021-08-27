@@ -16,5 +16,6 @@ namespace ScanME.Models
         public string Password { get; set; }
 
         public List<Role> Role { get; set; }
+        public Company Company { get; set; }
     }
 }

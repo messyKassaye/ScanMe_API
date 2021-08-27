@@ -60,3 +60,5 @@ C:\Users\User\Desktop\MasterProject\ScanME\ScanME\obj\Debug\net5.0\ScanME.pdb
 C:\Users\User\Desktop\MasterProject\ScanME\ScanME\obj\Debug\net5.0\ScanME.genruntimeconfig.cache
 C:\Users\User\Desktop\MasterProject\ScanME\ScanME\bin\Debug\net5.0\BCrypt.Net-Next.dll
 C:\Users\User\Desktop\MasterProject\ScanME\ScanME\bin\Debug\net5.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
+C:\Users\User\Desktop\MasterProject\ScanME\ScanME\bin\Debug\net5.0\AutoMapper.dll
+C:\Users\User\Desktop\MasterProject\ScanME\ScanME\bin\Debug\net5.0\AutoMapper.Extensions.Microsoft.DependencyInjection.dll

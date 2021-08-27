@@ -20,14 +20,19 @@ namespace ScanME.Repository
             _context = context;
         }
 
-        public async Task<Users> GetUser(string email)
+        public async Task<Users> CheckUsersEmailAndPhon(string email,string phone)
+        {
+            return await _context.Users.SingleOrDefaultAsync(u => u.Email == email||u.Phone == phone);
+        }
+
+        public async Task<Users> GetUsers(string email)
         {
             return await _context.Users.SingleOrDefaultAsync(u => u.Email == email);
         }
 
         public async Task<Users> Login(LoginModel loginModel)
         {
-            var user = await GetUser(loginModel.Email);
+            var user = await GetUsers(loginModel.Email);
             if (user != null)
             {
                 var verify = EncryptionHandler.VerifyPassword(loginModel.Password, user.Password);
@@ -40,11 +45,12 @@ namespace ScanME.Repository
             return null;
         }
 
-        public async Task RegisterCompany(string companyName)
+        public async Task RegisterCompany(string companyName,int userId)
         {
             var company = new Company()
             {
-                Name = companyName
+                Name = companyName,
+                UsersId=userId
             };
              await _context.Company.AddAsync(company);
              await _context.SaveChangesAsync();
@@ -54,7 +60,7 @@ namespace ScanME.Repository
         public async Task<AuthResponse> Signup(SignupModel signupModel)
         {
             //Check if some one registered by this email address
-            var CheckUserExistency = await GetUser(signupModel.Email);
+            var CheckUserExistency = await CheckUsersEmailAndPhon(signupModel.Email,signupModel.Phone);
             if(CheckUserExistency != null)
             {
                 return new AuthResponse()
@@ -82,11 +88,12 @@ namespace ScanME.Repository
 
             if (result == 1)
             {
-                await RegisterCompany(signupModel.CompanyName);
+                await RegisterCompany(signupModel.CompanyName,Users.UsersId);
                 response.Message = "Successfully registered";
                 response.StatusCode = StatusCodes.Status200OK;
                 response.Token = null;
                 response.IsRegistered = true;
+                response.Users = Users;
             }
             else
             {

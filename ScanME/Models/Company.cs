@@ -11,7 +11,9 @@ namespace ScanME.Models
         public string Name { get; set; }
         public string Logo { get; set; }
         public CompanyCategory Category { get; set; }
-        public Users Owner { get; set; }
+        public int UsersId { get; set; }
+        public Users Users { get; set; }
+
         public List<Phone> Phone { get; set; }
     }
 }

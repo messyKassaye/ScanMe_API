@@ -21,7 +21,7 @@ namespace ScanME.Contexts
         protected override void OnModelCreating(ModelBuilder builder)
         {
            
-
+           
         }
     }
 }

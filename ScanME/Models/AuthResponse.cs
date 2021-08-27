@@ -8,6 +8,7 @@ namespace ScanME.Models
     public class AuthResponse
     {
         public int StatusCode { get; set; }
+        public Users Users { get; set; }
         public string Token { get; set; }
         public string Message { get; set; }
         public bool IsRegistered { get; set; }
