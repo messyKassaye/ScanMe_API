@@ -41,11 +41,18 @@ namespace ScanME.Migrations
                     FullName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Email = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Phone = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Password = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    Password = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    RoleId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Users", x => x.UsersId);
+                    table.ForeignKey(
+                        name: "FK_Users_Role_RoleId",
+                        column: x => x.RoleId,
+                        principalTable: "Role",
+                        principalColumn: "RoleId",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -56,18 +63,19 @@ namespace ScanME.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Logo = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CategoryCompanyCategoryId = table.Column<int>(type: "int", nullable: true),
-                    UsersId = table.Column<int>(type: "int", nullable: false)
+                    CompanyCategoryId = table.Column<int>(type: "int", nullable: false),
+                    UsersId = table.Column<int>(type: "int", nullable: false),
+                    Phone = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Company", x => x.CompanyId);
                     table.ForeignKey(
-                        name: "FK_Company_CompanyCategories_CategoryCompanyCategoryId",
-                        column: x => x.CategoryCompanyCategoryId,
+                        name: "FK_Company_CompanyCategories_CompanyCategoryId",
+                        column: x => x.CompanyCategoryId,
                         principalTable: "CompanyCategories",
                         principalColumn: "CompanyCategoryId",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Company_Users_UsersId",
                         column: x => x.UsersId,
@@ -76,54 +84,28 @@ namespace ScanME.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.CreateTable(
-                name: "RoleUsers",
-                columns: table => new
+            migrationBuilder.InsertData(
+                table: "CompanyCategories",
+                columns: new[] { "CompanyCategoryId", "Name" },
+                values: new object[,]
                 {
-                    RoleId = table.Column<int>(type: "int", nullable: false),
-                    UsersId = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_RoleUsers", x => new { x.RoleId, x.UsersId });
-                    table.ForeignKey(
-                        name: "FK_RoleUsers_Role_RoleId",
-                        column: x => x.RoleId,
-                        principalTable: "Role",
-                        principalColumn: "RoleId",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_RoleUsers_Users_UsersId",
-                        column: x => x.UsersId,
-                        principalTable: "Users",
-                        principalColumn: "UsersId",
-                        onDelete: ReferentialAction.Cascade);
+                    { 1, "Tourism" },
+                    { 2, "Hotel, Restaurant and Bar" }
                 });
 
-            migrationBuilder.CreateTable(
-                name: "Phone",
-                columns: table => new
+            migrationBuilder.InsertData(
+                table: "Role",
+                columns: new[] { "RoleId", "Name" },
+                values: new object[,]
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    phone_number = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CompanyId = table.Column<int>(type: "int", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Phone", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Phone_Company_CompanyId",
-                        column: x => x.CompanyId,
-                        principalTable: "Company",
-                        principalColumn: "CompanyId",
-                        onDelete: ReferentialAction.Restrict);
+                    { 1, "Admin" },
+                    { 2, "Content developer" }
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Company_CategoryCompanyCategoryId",
+                name: "IX_Company_CompanyCategoryId",
                 table: "Company",
-                column: "CategoryCompanyCategoryId");
+                column: "CompanyCategoryId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Company_UsersId",
@@ -132,35 +114,24 @@ namespace ScanME.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Phone_CompanyId",
-                table: "Phone",
-                column: "CompanyId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_RoleUsers_UsersId",
-                table: "RoleUsers",
-                column: "UsersId");
+                name: "IX_Users_RoleId",
+                table: "Users",
+                column: "RoleId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Phone");
-
-            migrationBuilder.DropTable(
-                name: "RoleUsers");
-
-            migrationBuilder.DropTable(
                 name: "Company");
-
-            migrationBuilder.DropTable(
-                name: "Role");
 
             migrationBuilder.DropTable(
                 name: "CompanyCategories");
 
             migrationBuilder.DropTable(
                 name: "Users");
+
+            migrationBuilder.DropTable(
+                name: "Role");
         }
     }
 }

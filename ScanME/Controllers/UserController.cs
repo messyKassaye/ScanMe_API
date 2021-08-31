@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using ScanME.Contexts;
 using ScanME.DTO;
 using ScanME.Models;
+using ScanME.Services.Interfaces;
 using ScanME.UnitOfWorks;
 using System;
 using System.Collections.Generic;
@@ -16,22 +17,22 @@ namespace ScanME.Controllers
     public class UserController : Controller
     {
 
-        public ApplicationUnitOfWork<Users> _unitOfWork;
+        public IUserService _service;
         private readonly IMapper _mapper;
 
-        public UserController(ApplicationDbContext context,IMapper mapper)
+        public UserController(IUserService service,IMapper mapper)
         {
-            _unitOfWork = new ApplicationUnitOfWork<Users>(context);
+            _service = service;
             _mapper = mapper;
         }
        
         [HttpGet("me")]
         public IActionResult Me()
         {
-            int UserId = (int)HttpContext.Items["UserId"];
-            Users user = _unitOfWork.ModelRepository.Show(UserId);
-            var resources = _mapper.Map<Users, UserDTO>(user);
-            return Json(resources);
+            int loggedUserId = (int)HttpContext.Items["UserId"];
+            var response =  _service.Me(loggedUserId);
+
+            return Json(response);
         }
     }
 }

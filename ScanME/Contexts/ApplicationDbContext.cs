@@ -20,7 +20,23 @@ namespace ScanME.Contexts
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
-           
+            builder.Entity<CompanyCategory>().HasData(new CompanyCategory()
+            {
+                CompanyCategoryId=1,
+                Name = "Tourism",
+            },
+            new CompanyCategory()
+            {
+                CompanyCategoryId=2,
+                Name="Hotel, Restaurant and Bar"
+            }
+            );
+
+            //add roles
+            builder.Entity<Role>().HasData(
+                new Role() {RoleId=1, Name="Admin"},
+                new Role() {RoleId=2, Name="Content developer"}
+                );
            
         }
     }

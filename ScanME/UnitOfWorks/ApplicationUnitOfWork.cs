@@ -1,19 +1,12 @@
 ﻿using ScanME.Contexts;
-using ScanME.Helpers;
-using ScanME.Middlewares;
-using ScanME.Models;
 using ScanME.Repository;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace ScanME.UnitOfWorks
 {
     public class ApplicationUnitOfWork<T> where T:class
     {
         public ApplicationDbContext _context;
-        private GenericRepository<T> userRepository;
+        private GenericRepository<T> modelRepository;
 
         public ApplicationUnitOfWork(ApplicationDbContext context)
         {
@@ -24,12 +17,12 @@ namespace ScanME.UnitOfWorks
         {
             get
             {
-                if (this.userRepository == null)
+                if (this.modelRepository == null)
                 {
-                    this.userRepository = new GenericRepository<T>(_context);
+                    this.modelRepository = new GenericRepository<T>(_context);
                 }
 
-                return this.userRepository;
+                return this.modelRepository;
             }
         }
 

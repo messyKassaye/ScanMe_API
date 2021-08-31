@@ -4,9 +4,6 @@ using ScanME.Contexts;
 using ScanME.Helpers;
 using ScanME.Models;
 using ScanME.Repository.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace ScanME.Repository
@@ -45,17 +42,6 @@ namespace ScanME.Repository
             return null;
         }
 
-        public async Task RegisterCompany(string companyName,int userId)
-        {
-            var company = new Company()
-            {
-                Name = companyName,
-                UsersId=userId
-            };
-             await _context.Company.AddAsync(company);
-             await _context.SaveChangesAsync();
-            
-        }
 
         public async Task<AuthResponse> Signup(SignupModel signupModel)
         {
@@ -65,7 +51,7 @@ namespace ScanME.Repository
             {
                 return new AuthResponse()
                 {
-                    Message = "Some one is registered by this email address",
+                    Message = "Some one is registered by your email or phone. Please try again",
                     StatusCode = StatusCodes.Status409Conflict,
                     Token = null,
                     IsRegistered=false
@@ -78,6 +64,7 @@ namespace ScanME.Repository
                 FullName = signupModel.FullName,
                 Email = signupModel.Email,
                 Phone = signupModel.Phone,
+                RoleId=1,
                 Password = EncryptionHandler.HashPassword(signupModel.Password),
             };
 
@@ -88,7 +75,6 @@ namespace ScanME.Repository
 
             if (result == 1)
             {
-                await RegisterCompany(signupModel.CompanyName,Users.UsersId);
                 response.Message = "Successfully registered";
                 response.StatusCode = StatusCodes.Status200OK;
                 response.Token = null;

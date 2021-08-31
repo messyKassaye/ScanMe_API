@@ -12,7 +12,24 @@ namespace ScanME.Mapping
     {
         public ModelToResourceProfile()
         {
-            CreateMap<Users, UserDTO>();
+            //users resource data
+            CreateMap<Users, UserDTO>()
+                .ForMember(u => u.Company,
+                options => options.MapFrom(u => new CompanyDTO
+                {
+                    CompanyId = u.Company.CompanyId,
+                    CompanyName = u.Company.Name,
+                    Logo = u.Company.Logo,
+                    Category = new CompanyCategoryDTO
+                    {
+                        CompanyCategoryId = u.Company.Category.CompanyCategoryId,
+                        Name = u.Company.Category.Name,
+
+                    },
+                }))
+                .ForMember(u => u.Role,
+                    options => options.MapFrom(u => new RoleDTO { RoleId = u.Role.RoleId, Name = u.Role.Name }));
+                
         }
 
     }

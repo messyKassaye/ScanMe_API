@@ -10,5 +10,6 @@ namespace ScanME.DTO
         public int CompanyId { get; set; }
         public string CompanyName { get; set; }
         public string Logo { get; set; }
+        public CompanyCategoryDTO Category { get; set; }
     }
 }

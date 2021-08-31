@@ -1,11 +1,13 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
@@ -17,6 +19,7 @@ using ScanME.Repository;
 using ScanME.Repository.Interfaces;
 using ScanME.Services;
 using ScanME.Services.Interfaces;
+using System.IO;
 using System.Text;
 
 namespace ScanME
@@ -33,6 +36,7 @@ namespace ScanME
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddScoped<IUserService, UserService>();
             services.AddSingleton<ITokenService,TokenService>();
             services.AddScoped<IAuthRepository, AuthRepository>();
             services.AddDbContext<ApplicationDbContext>(options =>
@@ -54,6 +58,11 @@ namespace ScanME
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "ScanME", Version = "v1" });
             });
+            services.AddControllers().AddNewtonsoftJson(options =>
+            {
+                options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+
+            });
             services.AddAutoMapper(typeof(Startup));
         }
 
@@ -72,6 +81,9 @@ namespace ScanME
             app.UseRouting();
             app.UseAuthorization();
             app.UseAuthentication();
+
+            app.UseStaticFiles();
+            
 
             app.UseEndpoints(endpoints =>
             {

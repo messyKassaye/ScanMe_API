@@ -10,6 +10,5 @@ namespace ScanME.Repository.Interfaces
        Task<AuthResponse> Signup(SignupModel signupModel);
        Task<Users> CheckUsersEmailAndPhon(string email,string phone);
        Task<Users> GetUsers(string email);
-       Task RegisterCompany(string companyName,int usersId);
     }
 }
